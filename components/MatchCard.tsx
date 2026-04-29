@@ -25,11 +25,12 @@ interface MatchCardProps {
 }
 
 function formatDay(iso: string) {
-  return new Date(iso).toLocaleDateString("es-MX", {
+  const raw = new Date(iso).toLocaleDateString("es-MX", {
     weekday: "short",
     day: "numeric",
     month: "short",
   });
+  return raw.charAt(0).toUpperCase() + raw.slice(1);
 }
 
 function formatTime(iso: string) {
@@ -170,7 +171,7 @@ export default function MatchCard({
       {/* Top row: date + status */}
       <header className="flex items-center justify-between gap-3 mb-5">
         <div className="text-[13px] text-[#64748b] font-medium">
-          <span className="capitalize">{formatDay(match.match_date)}</span>
+          <span>{formatDay(match.match_date)}</span>
           <span className="mx-1.5 text-[#cbd5e1]">·</span>
           <span>{formatTime(match.match_date)}</span>
         </div>
