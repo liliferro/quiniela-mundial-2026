@@ -1,26 +1,115 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Brand palette */
+  --stadium-green: #063b22;
+  --pitch-green: #00a859;
+  --pitch-green-deep: #007a3d;
+  --world-cup-blue: #0057ff;
+  --champion-gold: #f5c542;
+  --goal-red: #ef4444;
+  --midnight-navy: #07111f;
+  --soft-white: #f8fafc;
+  --cool-gray: #64748b;
+  --border-gray: #e2e8f0;
+
+  --background: var(--midnight-navy);
+  --foreground: var(--soft-white);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-stadium-green: var(--stadium-green);
+  --color-pitch-green: var(--pitch-green);
+  --color-pitch-deep: var(--pitch-green-deep);
+  --color-wc-blue: var(--world-cup-blue);
+  --color-champion-gold: var(--champion-gold);
+  --color-goal-red: var(--goal-red);
+  --color-midnight: var(--midnight-navy);
+  --color-soft-white: var(--soft-white);
+  --color-cool-gray: var(--cool-gray);
+  --color-border-gray: var(--border-gray);
+
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-sora);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+html,
 body {
-  background: var(--background);
+  background: var(--midnight-navy);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+}
+
+.font-display {
+  font-family: var(--font-sora), system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/* Stadium gradient backdrop with subtle pitch lines */
+.stadium-bg {
+  background:
+    radial-gradient(circle at 50% 0%, #0a6b3a 0%, #063b22 38%, #07111f 100%);
+  position: relative;
+  isolation: isolate;
+}
+
+.stadium-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(transparent 95%, rgba(255, 255, 255, 0.05) 95%),
+    linear-gradient(90deg, transparent 95%, rgba(255, 255, 255, 0.05) 95%);
+  background-size: 64px 64px;
+  pointer-events: none;
+  z-index: -1;
+  mask-image: radial-gradient(circle at 50% 30%, black 0%, transparent 75%);
+}
+
+.stadium-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 50% 0%, rgba(0, 168, 89, 0.18), transparent 70%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Live pulse */
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.4); }
+}
+
+.live-dot {
+  animation: live-pulse 1.4s ease-in-out infinite;
+}
+
+/* Toast slide-up */
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.25s ease-out;
+}
+
+/* Hide native number-input arrows */
+.no-spin::-webkit-outer-spin-button,
+.no-spin::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.no-spin {
+  -moz-appearance: textfield;
+}
+
+/* Pretty horizontal scrollbar for filter pills on mobile */
+.pretty-scroll {
+  scrollbar-width: none;
+}
+.pretty-scroll::-webkit-scrollbar {
+  display: none;
 }

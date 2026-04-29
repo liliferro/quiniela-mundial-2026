@@ -12,6 +12,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "No autenticado" }, { status: 401 });
   }
 
+  // Ensure a profile row exists for this auth user (predictions.user_id → profiles.id)
+  const { error: profileError } = await supabase
+    .from("profiles")
+    .upsert({ id: user.id }, { onConflict: "id" });
+
+  if (profileError) {
+    return NextResponse.json({ error: profileError.message }, { status: 500 });
+  }
+
   const body = await request.json();
   const { match_id, pred_home, pred_away, league_id } = body;
   const validLeagueId = league_id && typeof league_id === "string" && league_id !== "default"
