@@ -67,14 +67,9 @@ body {
     linear-gradient(90deg, transparent 95%, rgba(255, 255, 255, 0.05) 95%);
   background-size: 64px 64px;
   pointer-events: none;
-  z-index: 0;
+  z-index: -1;
   -webkit-mask-image: radial-gradient(ellipse 70% 50% at 50% 25%, black 0%, transparent 75%);
   mask-image: radial-gradient(ellipse 70% 50% at 50% 25%, black 0%, transparent 75%);
-}
-
-.stadium-bg > * {
-  position: relative;
-  z-index: 1;
 }
 
 /* Live pulse */
