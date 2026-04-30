@@ -10,6 +10,21 @@ type RankingEntry = {
   position: number;
 };
 
+const DEMO_RANKING: RankingEntry[] = [
+  { user_id: "demo-1",  display_name: "Carlos Mendoza",    total_pts: 47, exact_count: 3, position: 1 },
+  { user_id: "demo-2",  display_name: "Ana Sofía Reyes",   total_pts: 43, exact_count: 2, position: 2 },
+  { user_id: "demo-3",  display_name: "Roberto Torres",    total_pts: 41, exact_count: 2, position: 3 },
+  { user_id: "demo-4",  display_name: "María José López",  total_pts: 38, exact_count: 2, position: 4 },
+  { user_id: "demo-5",  display_name: "Diego Álvarez",     total_pts: 36, exact_count: 1, position: 5 },
+  { user_id: "demo-6",  display_name: "Valentina Gómez",   total_pts: 33, exact_count: 1, position: 6 },
+  { user_id: "demo-7",  display_name: "Andrés Peña",       total_pts: 31, exact_count: 1, position: 7 },
+  { user_id: "demo-8",  display_name: "Lucía Fernández",   total_pts: 28, exact_count: 1, position: 8 },
+  { user_id: "demo-9",  display_name: "Mateo Hernández",   total_pts: 26, exact_count: 0, position: 9 },
+  { user_id: "demo-10", display_name: "Camila Vargas",     total_pts: 24, exact_count: 0, position: 10 },
+  { user_id: "demo-11", display_name: "Sebastián Castro",  total_pts: 21, exact_count: 0, position: 11 },
+  { user_id: "demo-12", display_name: "Renata Bravo",      total_pts: 19, exact_count: 0, position: 12 },
+];
+
 function initialOf(name: string | null) {
   return name?.trim()?.[0]?.toUpperCase() ?? "?";
 }
@@ -22,9 +37,11 @@ export default async function RankingPage() {
     supabase.from("league_rankings").select("*").order("position"),
   ]);
 
-  const ranking = (data as RankingEntry[]) ?? [];
+  const realRanking = (data as RankingEntry[]) ?? [];
+  const isDemo = realRanking.length === 0;
+  const ranking = isDemo ? DEMO_RANKING : realRanking;
   const meId = user?.id ?? "";
-  const me = ranking.find((r) => r.user_id === meId) ?? null;
+  const me = realRanking.find((r) => r.user_id === meId) ?? null;
 
   const top3 = ranking.slice(0, 3);
   const rest = ranking.slice(3);
@@ -48,9 +65,9 @@ export default async function RankingPage() {
                 Tabla de posiciones
               </h2>
               <p className="text-sm sm:text-base text-white/70 mt-2">
-                {ranking.length === 0
-                  ? "Aún no hay jugadores en el ranking. Las posiciones aparecerán cuando empiecen a finalizar los partidos."
-                  : `${ranking.length} ${ranking.length === 1 ? "jugador compitiendo" : "jugadores compitiendo"} por la corona del Mundial 2026.`}
+                {isDemo
+                  ? "Vista previa de cómo lucirá la tabla durante el Mundial. Las posiciones reales se contarán cuando ruede el balón."
+                  : `${realRanking.length} ${realRanking.length === 1 ? "jugador compitiendo" : "jugadores compitiendo"} por la corona del Mundial 2026.`}
               </p>
             </div>
 
@@ -77,26 +94,29 @@ export default async function RankingPage() {
           </div>
         </section>
 
-        {/* Empty state */}
-        {ranking.length === 0 ? (
-          <section className="text-center py-16 rounded-3xl border border-dashed border-white/15 bg-white/5">
-            <div className="text-4xl mb-3">🏟️</div>
-            <p className="font-display text-xl text-white font-bold">
-              El ranking despierta cuando ruede el balón
-            </p>
-            <p className="text-sm text-white/60 mt-2 max-w-md mx-auto">
-              Una vez que finalicen los primeros partidos, los puntos
-              empezarán a contarse y aparecerás en la tabla.
-            </p>
-            <Link
-              href="/partidos"
-              className="inline-flex items-center gap-2 mt-6 px-5 py-3 rounded-xl font-display font-bold text-sm text-white bg-gradient-to-br from-[#00a859] to-[#007a3d] shadow-[0_8px_20px_rgba(0,168,89,0.28)] hover:-translate-y-px transition-all"
-            >
-              ⚽ Hacer mis predicciones
-            </Link>
-          </section>
-        ) : (
-          <>
+        {/* Demo banner */}
+        {isDemo && (
+          <div className="rounded-2xl border border-[#f5c542]/30 bg-[#f5c542]/10 backdrop-blur-sm px-4 sm:px-5 py-3 sm:py-4 flex items-start gap-3">
+            <span className="text-xl shrink-0 leading-none">📋</span>
+            <div className="text-sm text-white">
+              <span className="font-display font-bold">Datos de ejemplo.</span>{" "}
+              <span className="text-white/75">
+                Estos jugadores son ficticios para mostrar cómo se verá la tabla.
+                El ranking real empezará a contarse cuando finalicen los primeros
+                partidos del Mundial.{" "}
+              </span>
+              <Link
+                href="/partidos"
+                className="font-semibold text-[#f5c542] hover:underline whitespace-nowrap"
+              >
+                Mientras tanto, predice →
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {/* Leaderboard */}
+        <>
             {/* Podium */}
             {top3.length > 0 && (
               <section>
@@ -226,8 +246,7 @@ export default async function RankingPage() {
             <p className="text-xs text-white/50 text-center pt-2">
               🎯 Marcador exacto · Las posiciones se actualizan al cierre de cada partido
             </p>
-          </>
-        )}
+        </>
       </main>
     </div>
   );
