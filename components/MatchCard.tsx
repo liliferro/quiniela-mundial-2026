@@ -159,7 +159,7 @@ export default function MatchCard({
   const buttonDisabled = isSubmitting || locked || (hasPrediction && !dirty);
 
   return (
-    <article className="w-full max-w-[820px] mx-auto rounded-3xl bg-white border border-[#e2e8f0] p-5 sm:p-6 shadow-[0_18px_45px_rgba(7,17,31,0.14)] transition-shadow hover:shadow-[0_22px_55px_rgba(7,17,31,0.18)]">
+    <article className="w-full max-w-[820px] mx-auto overflow-hidden rounded-3xl bg-white border border-[#e2e8f0] p-5 sm:p-6 shadow-[0_18px_45px_rgba(7,17,31,0.14)] transition-shadow hover:shadow-[0_22px_55px_rgba(7,17,31,0.18)]">
       {/* Top row: date/venue + status */}
       <header className="flex items-start justify-between gap-3 mb-5">
         <div className="min-w-0 flex-1">
