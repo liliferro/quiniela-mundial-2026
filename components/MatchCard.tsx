@@ -175,26 +175,40 @@ export default function MatchCard({
       {/* Top row: date/venue + status */}
       <header className="flex items-start justify-between gap-3 mb-5">
         <div className="min-w-0 flex-1">
-          <div className="text-[13px] text-[#64748b] font-medium">
+          <div className="text-[13px] text-[#0f172a] font-semibold">
             <span>{formatDay(match.match_date)}</span>
             <span className="mx-1.5 text-[#cbd5e1]">·</span>
             <span>{formatTime(match.match_date)}</span>
           </div>
           {(match.venue || match.city) && (
-            <div className="text-[12px] text-[#94a3b8] mt-0.5 truncate">
-              {match.venue}
-              {match.venue && (match.city || match.country) && (
-                <span className="mx-1 text-[#cbd5e1]">·</span>
-              )}
-              {match.city}
-              {match.city && match.country ? ", " : ""}
-              {match.country}
+            <div className="flex items-center gap-1.5 text-[12.5px] text-[#475569] mt-1 font-medium">
+              <svg
+                className="w-3.5 h-3.5 shrink-0 text-[#00a859]"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden
+              >
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z" />
+              </svg>
+              <span className="truncate">
+                <span className="text-[#0f172a] font-semibold">
+                  {match.venue}
+                </span>
+                {(match.city || match.country) && (
+                  <span className="text-[#64748b]">
+                    {" · "}
+                    {match.city}
+                    {match.city && match.country ? ", " : ""}
+                    {match.country}
+                  </span>
+                )}
+              </span>
             </div>
           )}
         </div>
         <div className="flex flex-col items-end gap-1.5 shrink-0">
           {match.group_name && (
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-[#f1f5f9] text-[#475569] text-[10px] font-bold uppercase tracking-wider">
+            <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-gradient-to-br from-[#f5c542] to-[#e0a921] text-[#3d2300] text-[10px] font-extrabold uppercase tracking-[0.12em] shadow-[0_4px_12px_rgba(245,197,66,0.35)]">
               Grupo {match.group_name}
             </span>
           )}
