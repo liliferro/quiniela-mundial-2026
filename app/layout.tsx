@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Sora, Inter } from "next/font/google";
 import "./globals.css";
 
@@ -17,6 +17,13 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Quiniela Mundial 2026",
   description: "Predice los resultados del Mundial FIFA 2026",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: "#063b22",
 };
 
 export default function RootLayout({
