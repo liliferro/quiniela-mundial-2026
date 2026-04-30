@@ -49,7 +49,7 @@ const BASE_FILTERS: { id: FilterId; label: string }[] = [
   { id: "today", label: "Hoy" },
   { id: "upcoming", label: "Próximos" },
   { id: "missing", label: "Sin predecir" },
-  { id: "predicted", label: "Predichos" },
+  { id: "predicted", label: "Mis predicciones" },
 ];
 
 function isSameDay(a: Date, b: Date) {
