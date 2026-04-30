@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import MatchCard from "@/components/MatchCard";
+import AppHeader from "@/components/AppHeader";
 
 type Match = {
   id: string;
@@ -59,10 +60,6 @@ function isSameDay(a: Date, b: Date) {
   );
 }
 
-function userInitial(name: string) {
-  return name?.trim()?.[0]?.toUpperCase() ?? "?";
-}
-
 export default function PartidosPage() {
   const [matches, setMatches] = useState<Match[]>([]);
   const [predictions, setPredictions] = useState<Record<string, Prediction>>({});
@@ -70,7 +67,6 @@ export default function PartidosPage() {
   const [submittingId, setSubmittingId] = useState<string | null>(null);
   const [toast, setToast] = useState<Toast | null>(null);
   const [filter, setFilter] = useState<FilterId>("all");
-  const [userName, setUserName] = useState<string>("");
   const [ranking, setRanking] = useState<RankingRow | null>(null);
 
   function showToast(message: string, type: "success" | "error") {
@@ -83,14 +79,6 @@ export default function PartidosPage() {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-
-    if (user) {
-      setUserName(
-        (user.user_metadata?.full_name as string) ??
-          user.email ??
-          "Jugador"
-      );
-    }
 
     const { data: matchesData } = await supabase
       .from("matches")
@@ -214,61 +202,7 @@ export default function PartidosPage() {
 
   return (
     <div className="min-h-screen stadium-bg">
-      {/* Header */}
-      <header className="relative z-10 border-b border-white/5 backdrop-blur-md bg-black/15">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#00a859] to-[#007a3d] flex items-center justify-center font-display font-extrabold text-white shadow-lg shadow-emerald-500/20">
-              Q
-            </div>
-            <div className="hidden sm:block">
-              <h1 className="font-display text-base font-bold text-white leading-tight">
-                Quiniela Mundial 2026
-              </h1>
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-emerald-300/80">
-                Fase de grupos
-              </span>
-            </div>
-            <span className="sm:hidden inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide bg-emerald-500/15 text-emerald-300 border border-emerald-400/30">
-              Fase de grupos
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2 sm:gap-4">
-            <a
-              href="/dashboard"
-              className="hidden sm:inline-flex items-center gap-1.5 text-sm text-white/80 hover:text-white transition-colors"
-            >
-              ← Dashboard
-            </a>
-            <div className="hidden md:flex items-center gap-3 px-3 py-1.5 rounded-full bg-white/5 border border-white/10">
-              <div className="flex items-center gap-1.5">
-                <span className="text-[#f5c542] font-display font-bold text-sm">
-                  {stats.points}
-                </span>
-                <span className="text-[10px] uppercase tracking-wider text-white/60 font-semibold">
-                  pts
-                </span>
-              </div>
-              <span className="w-px h-4 bg-white/15" />
-              <div className="flex items-center gap-1.5">
-                <span className="text-white font-display font-bold text-sm">
-                  {positionLabel}
-                </span>
-                <span className="text-[10px] uppercase tracking-wider text-white/60 font-semibold">
-                  ranking
-                </span>
-              </div>
-            </div>
-            <div
-              className="w-9 h-9 rounded-full bg-gradient-to-br from-[#0057ff] to-[#0036a8] flex items-center justify-center font-display font-bold text-white text-sm ring-2 ring-white/20"
-              title={userName}
-            >
-              {userInitial(userName)}
-            </div>
-          </div>
-        </div>
-      </header>
+      <AppHeader active="partidos" />
 
       <main className="relative z-0 max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
         {/* Hero / Progress */}
