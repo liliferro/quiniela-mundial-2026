@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { flagEmoji } from "@/lib/flag";
 
 interface MatchCardProps {
   match: {
@@ -73,8 +74,12 @@ function StatusBadge({
 function TeamColumn({ code, name }: { code: string; name: string }) {
   return (
     <div className="flex flex-col items-center gap-2 min-w-0">
-      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-[#063b22] to-[#0a6b3a] text-white font-display font-bold text-sm flex items-center justify-center shadow-md ring-2 ring-white/60">
-        {code}
+      <div
+        className="text-[44px] sm:text-[52px] leading-none drop-shadow-sm select-none"
+        aria-label={`Bandera de ${name}`}
+        role="img"
+      >
+        {flagEmoji(code)}
       </div>
       <div className="text-center w-full min-w-0">
         <div className="font-display text-xl sm:text-2xl font-extrabold text-[#07111f] leading-none tracking-tight">
