@@ -169,7 +169,7 @@ export default function MatchCard({
             <span>{formatTime(match.match_date)}</span>
           </div>
           {(match.venue || match.city) && (
-            <div className="flex items-center gap-1.5 text-[12.5px] text-[#475569] mt-1 font-medium">
+            <div className="flex items-center gap-1.5 text-[12.5px] text-[#475569] mt-1 font-medium min-w-0">
               <svg
                 className="w-3.5 h-3.5 shrink-0 text-[#00a859]"
                 viewBox="0 0 24 24"
@@ -178,7 +178,7 @@ export default function MatchCard({
               >
                 <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z" />
               </svg>
-              <span className="truncate">
+              <span className="truncate min-w-0 flex-1">
                 <span className="text-[#0f172a] font-semibold">
                   {match.venue}
                 </span>
@@ -205,7 +205,7 @@ export default function MatchCard({
       </header>
 
       {/* Teams row */}
-      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 sm:gap-6">
+      <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 sm:gap-6">
         <TeamColumn code={match.home_flag} name={match.home_team} />
         <span className="font-display font-bold text-xs sm:text-sm tracking-[0.18em] text-[#94a3b8] px-1">
           VS
