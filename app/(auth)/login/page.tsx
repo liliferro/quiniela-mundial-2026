@@ -37,9 +37,9 @@ export default function LoginPage() {
       <div className="absolute -bottom-40 -right-32 w-[520px] h-[520px] rounded-full bg-[#0057ff]/15 blur-3xl pointer-events-none" />
       <div className="absolute top-1/3 right-1/4 w-[260px] h-[260px] rounded-full bg-[#f5c542]/10 blur-3xl pointer-events-none" />
 
-      <div className="relative min-h-screen flex flex-col lg:flex-row">
+      <div className="relative lg:min-h-screen lg:flex lg:flex-row">
         {/* Left side — Brand + value prop */}
-        <section className="flex-1 px-6 sm:px-10 lg:px-16 pt-10 lg:pt-0 lg:flex lg:items-center">
+        <section className="lg:flex-1 lg:flex lg:items-center px-6 sm:px-10 lg:px-16 pt-10 pb-6 lg:py-0">
           <div className="max-w-xl mx-auto lg:mx-0 w-full">
             <div className="flex items-center gap-3 mb-8 lg:mb-12">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#00a859] to-[#007a3d] flex items-center justify-center font-display font-extrabold text-white text-xl shadow-lg shadow-emerald-500/30">
@@ -98,7 +98,7 @@ export default function LoginPage() {
         </section>
 
         {/* Right side — Login card */}
-        <section className="flex-1 px-6 sm:px-10 lg:px-16 py-10 lg:py-0 lg:flex lg:items-center">
+        <section className="lg:flex-1 lg:flex lg:items-center px-6 sm:px-10 lg:px-16 py-8 lg:py-0">
           <div className="max-w-md mx-auto lg:mx-0 w-full">
             <div className="relative">
               {/* Glow behind card */}
