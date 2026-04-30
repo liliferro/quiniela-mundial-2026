@@ -14,6 +14,10 @@ type Match = {
   status: "scheduled" | "live" | "finished";
   home_score: number | null;
   away_score: number | null;
+  group_name: string | null;
+  venue: string | null;
+  city: string | null;
+  country: string | null;
 };
 
 type Prediction = {
@@ -36,9 +40,10 @@ type FilterId =
   | "today"
   | "upcoming"
   | "missing"
-  | "predicted";
+  | "predicted"
+  | `group:${string}`;
 
-const FILTERS: { id: FilterId; label: string }[] = [
+const BASE_FILTERS: { id: FilterId; label: string }[] = [
   { id: "all", label: "Todos" },
   { id: "today", label: "Hoy" },
   { id: "upcoming", label: "Próximos" },
@@ -176,10 +181,19 @@ export default function PartidosPage() {
 
   const positionLabel = stats.position ? `#${stats.position}` : "#—";
 
+  const groupOptions = useMemo(() => {
+    const set = new Set<string>();
+    matches.forEach((m) => m.group_name && set.add(m.group_name));
+    return Array.from(set).sort();
+  }, [matches]);
+
   const filteredMatches = useMemo(() => {
     const now = new Date();
     return matches.filter((m) => {
       const d = new Date(m.match_date);
+      if (filter.startsWith("group:")) {
+        return m.group_name === filter.slice(6);
+      }
       switch (filter) {
         case "today":
           return isSameDay(d, now);
@@ -311,26 +325,33 @@ export default function PartidosPage() {
         </section>
 
         {/* Filters */}
-        <nav className="mt-6 sm:mt-8 -mx-4 px-4 sm:mx-0 sm:px-0">
-          <div className="pretty-scroll flex items-center gap-2 overflow-x-auto pb-2">
-            {FILTERS.map((f) => {
-              const active = f.id === filter;
-              return (
-                <button
-                  key={f.id}
-                  onClick={() => setFilter(f.id)}
-                  className={`shrink-0 px-4 py-2 rounded-full text-sm font-semibold transition-all border
-                    ${
-                      active
-                        ? "bg-white text-[#07111f] border-white shadow-lg shadow-black/20"
-                        : "bg-white/5 text-white/80 border-white/10 hover:bg-white/10 hover:text-white"
-                    }`}
-                >
-                  {f.label}
-                </button>
-              );
-            })}
+        <nav className="mt-6 sm:mt-8 -mx-4 px-4 sm:mx-0 sm:px-0 space-y-2">
+          <div className="pretty-scroll flex items-center gap-2 overflow-x-auto pb-1">
+            {BASE_FILTERS.map((f) => (
+              <FilterPill
+                key={f.id}
+                label={f.label}
+                active={f.id === filter}
+                onClick={() => setFilter(f.id)}
+              />
+            ))}
           </div>
+          {groupOptions.length > 0 && (
+            <div className="pretty-scroll flex items-center gap-2 overflow-x-auto pb-1">
+              <span className="shrink-0 text-[11px] font-bold uppercase tracking-[0.18em] text-white/40 pr-1">
+                Grupos
+              </span>
+              {groupOptions.map((g) => (
+                <FilterPill
+                  key={g}
+                  label={g}
+                  active={filter === `group:${g}`}
+                  onClick={() => setFilter(`group:${g}`)}
+                  compact
+                />
+              ))}
+            </div>
+          )}
         </nav>
 
         {/* List */}
@@ -380,6 +401,32 @@ export default function PartidosPage() {
         </div>
       )}
     </div>
+  );
+}
+
+function FilterPill({
+  label,
+  active,
+  onClick,
+  compact = false,
+}: {
+  label: string;
+  active: boolean;
+  onClick: () => void;
+  compact?: boolean;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`shrink-0 ${compact ? "px-3 py-1.5 text-xs" : "px-4 py-2 text-sm"} rounded-full font-semibold transition-all border
+        ${
+          active
+            ? "bg-white text-[#07111f] border-white shadow-lg shadow-black/20"
+            : "bg-white/5 text-white/80 border-white/10 hover:bg-white/10 hover:text-white"
+        }`}
+    >
+      {label}
+    </button>
   );
 }
 

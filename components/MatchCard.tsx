@@ -13,6 +13,10 @@ interface MatchCardProps {
     status: "scheduled" | "live" | "finished";
     home_score: number | null;
     away_score: number | null;
+    group_name?: string | null;
+    venue?: string | null;
+    city?: string | null;
+    country?: string | null;
   };
   prediction?: {
     pred_home: number;
@@ -168,14 +172,34 @@ export default function MatchCard({
 
   return (
     <article className="w-full max-w-[820px] mx-auto rounded-3xl bg-white border border-[#e2e8f0] p-5 sm:p-6 shadow-[0_18px_45px_rgba(7,17,31,0.14)] transition-shadow hover:shadow-[0_22px_55px_rgba(7,17,31,0.18)]">
-      {/* Top row: date + status */}
-      <header className="flex items-center justify-between gap-3 mb-5">
-        <div className="text-[13px] text-[#64748b] font-medium">
-          <span>{formatDay(match.match_date)}</span>
-          <span className="mx-1.5 text-[#cbd5e1]">·</span>
-          <span>{formatTime(match.match_date)}</span>
+      {/* Top row: date/venue + status */}
+      <header className="flex items-start justify-between gap-3 mb-5">
+        <div className="min-w-0 flex-1">
+          <div className="text-[13px] text-[#64748b] font-medium">
+            <span>{formatDay(match.match_date)}</span>
+            <span className="mx-1.5 text-[#cbd5e1]">·</span>
+            <span>{formatTime(match.match_date)}</span>
+          </div>
+          {(match.venue || match.city) && (
+            <div className="text-[12px] text-[#94a3b8] mt-0.5 truncate">
+              {match.venue}
+              {match.venue && (match.city || match.country) && (
+                <span className="mx-1 text-[#cbd5e1]">·</span>
+              )}
+              {match.city}
+              {match.city && match.country ? ", " : ""}
+              {match.country}
+            </div>
+          )}
         </div>
-        <StatusBadge state={state} />
+        <div className="flex flex-col items-end gap-1.5 shrink-0">
+          {match.group_name && (
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-[#f1f5f9] text-[#475569] text-[10px] font-bold uppercase tracking-wider">
+              Grupo {match.group_name}
+            </span>
+          )}
+          <StatusBadge state={state} />
+        </div>
       </header>
 
       {/* Teams + scoreboard */}
