@@ -38,10 +38,11 @@ export default async function RankingPage() {
   ]);
 
   const realRanking = (data as RankingEntry[]) ?? [];
-  const isDemo = realRanking.length === 0;
+  // Demo mode: no real points have been awarded yet (all entries are 0 pts, or list is empty)
+  const isDemo = !realRanking.some((r) => r.total_pts > 0);
   const ranking = isDemo ? DEMO_RANKING : realRanking;
   const meId = user?.id ?? "";
-  const me = realRanking.find((r) => r.user_id === meId) ?? null;
+  const me = !isDemo ? realRanking.find((r) => r.user_id === meId) ?? null : null;
 
   const top3 = ranking.slice(0, 3);
   const rest = ranking.slice(3);
