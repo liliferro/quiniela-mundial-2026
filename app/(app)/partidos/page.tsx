@@ -242,7 +242,7 @@ export default function PartidosPage() {
             </div>
 
             {/* Mini stats */}
-            <div className="grid grid-cols-3 gap-3 lg:w-[420px]">
+            <div className="grid grid-cols-3 gap-2 sm:gap-3 lg:w-[420px]">
               <StatCard
                 label="Puntos"
                 value={stats.points.toString()}

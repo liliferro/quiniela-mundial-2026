@@ -70,29 +70,17 @@ function StatusBadge({
   );
 }
 
-function TeamColumn({
-  code,
-  name,
-  align,
-}: {
-  code: string;
-  name: string;
-  align: "left" | "right";
-}) {
+function TeamColumn({ code, name }: { code: string; name: string }) {
   return (
-    <div
-      className={`flex flex-col items-center sm:items-${align === "left" ? "start" : "end"} gap-2`}
-    >
-      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-[#063b22] to-[#0a6b3a] text-white font-display font-bold text-sm flex items-center justify-center shadow-md ring-2 ring-white/60">
+    <div className="flex flex-col items-center gap-2 min-w-0">
+      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-[#063b22] to-[#0a6b3a] text-white font-display font-bold text-sm flex items-center justify-center shadow-md ring-2 ring-white/60">
         {code}
       </div>
-      <div
-        className={`text-center sm:text-${align === "left" ? "left" : "right"}`}
-      >
+      <div className="text-center w-full min-w-0">
         <div className="font-display text-xl sm:text-2xl font-extrabold text-[#07111f] leading-none tracking-tight">
           {code}
         </div>
-        <div className="text-[11px] sm:text-xs text-[#64748b] font-medium mt-0.5 max-w-[100px] truncate">
+        <div className="text-[11px] sm:text-xs text-[#64748b] font-medium mt-1 truncate">
           {name}
         </div>
       </div>
@@ -216,52 +204,55 @@ export default function MatchCard({
         </div>
       </header>
 
-      {/* Teams + scoreboard */}
-      <div className="grid grid-cols-3 items-center gap-3 sm:gap-6">
-        <TeamColumn
-          code={match.home_flag}
-          name={match.home_team}
-          align="right"
-        />
+      {/* Teams row */}
+      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 sm:gap-6">
+        <TeamColumn code={match.home_flag} name={match.home_team} />
+        <span className="font-display font-bold text-xs sm:text-sm tracking-[0.18em] text-[#94a3b8] px-1">
+          VS
+        </span>
+        <TeamColumn code={match.away_flag} name={match.away_team} />
+      </div>
 
-        {/* Scoreboard center */}
-        <div className="flex flex-col items-center gap-2">
-          {isFinished && match.home_score !== null && match.away_score !== null ? (
-            <div className="flex items-center gap-2">
-              <span className="font-display font-extrabold text-3xl text-[#07111f]">
+      {/* Final score (when finished) */}
+      {isFinished &&
+        match.home_score !== null &&
+        match.away_score !== null && (
+          <div className="mt-5 sm:mt-6 flex flex-col items-center gap-1.5">
+            <span className="text-[10px] font-semibold text-[#94a3b8] uppercase tracking-wider">
+              Marcador final
+            </span>
+            <div className="flex items-center gap-3">
+              <span className="font-display font-extrabold text-4xl text-[#07111f]">
                 {match.home_score}
               </span>
-              <span className="font-display text-xl text-[#64748b]">-</span>
-              <span className="font-display font-extrabold text-3xl text-[#07111f]">
+              <span className="font-display text-2xl text-[#cbd5e1]">-</span>
+              <span className="font-display font-extrabold text-4xl text-[#07111f]">
                 {match.away_score}
               </span>
             </div>
-          ) : (
-            <span className="font-display font-bold text-sm tracking-[0.18em] text-[#64748b]">
-              VS
-            </span>
-          )}
-          <span className="text-[10px] font-semibold text-[#94a3b8] uppercase tracking-wider">
-            {locked ? "Tu predicción" : "Predicción"}
-          </span>
-          <div className="flex items-center gap-2 mt-1">
-            <ScoreInput value={home} onChange={handleHome} disabled={locked} />
-            <span className="font-display font-extrabold text-2xl text-[#cbd5e1]">
-              :
-            </span>
-            <ScoreInput value={away} onChange={handleAway} disabled={locked} />
           </div>
-        </div>
+        )}
 
-        <TeamColumn
-          code={match.away_flag}
-          name={match.away_team}
-          align="left"
-        />
+      {/* Prediction inputs */}
+      <div className="mt-5 sm:mt-6 flex flex-col items-center gap-2">
+        <span className="text-[10px] font-semibold text-[#94a3b8] uppercase tracking-wider">
+          {isFinished
+            ? "Tu predicción"
+            : locked
+              ? "Tu predicción"
+              : "Predicción"}
+        </span>
+        <div className="flex items-center gap-3">
+          <ScoreInput value={home} onChange={handleHome} disabled={locked} />
+          <span className="font-display font-extrabold text-2xl text-[#cbd5e1]">
+            :
+          </span>
+          <ScoreInput value={away} onChange={handleAway} disabled={locked} />
+        </div>
       </div>
 
       {/* Action / status feedback */}
-      <div className="mt-6">
+      <div className="mt-5 sm:mt-6">
         {isFinished && prediction ? (
           <PointsBadge pts={prediction.pts_earned} />
         ) : locked ? (
@@ -269,24 +260,26 @@ export default function MatchCard({
             🔒 Predicciones cerradas para este partido
           </div>
         ) : (
-          <button
-            onClick={() => {
-              onSave(match.id, home, away);
-              setDirty(false);
-            }}
-            disabled={buttonDisabled}
-            className={`w-full sm:w-auto sm:min-w-[260px] sm:mx-auto sm:flex sm:justify-center px-6 py-3 rounded-xl font-display font-bold text-white text-sm tracking-wide transition-all
-              ${
-                buttonDisabled
-                  ? "bg-[#cbd5e1] cursor-not-allowed"
-                  : "bg-gradient-to-br from-[#00a859] to-[#007a3d] shadow-[0_8px_20px_rgba(0,168,89,0.28)] hover:-translate-y-px hover:shadow-[0_12px_28px_rgba(0,168,89,0.38)] cursor-pointer"
-              }`}
-          >
-            {hasPrediction && !dirty && (
-              <span className="inline-block mr-2">✓</span>
-            )}
-            {buttonLabel}
-          </button>
+          <div className="flex sm:justify-center">
+            <button
+              onClick={() => {
+                onSave(match.id, home, away);
+                setDirty(false);
+              }}
+              disabled={buttonDisabled}
+              className={`w-full sm:w-auto sm:min-w-[280px] px-6 py-3.5 rounded-xl font-display font-bold text-white text-sm tracking-wide transition-all
+                ${
+                  buttonDisabled
+                    ? "bg-[#cbd5e1] cursor-not-allowed"
+                    : "bg-gradient-to-br from-[#00a859] to-[#007a3d] shadow-[0_8px_20px_rgba(0,168,89,0.28)] hover:-translate-y-px hover:shadow-[0_12px_28px_rgba(0,168,89,0.38)] cursor-pointer"
+                }`}
+            >
+              {hasPrediction && !dirty && (
+                <span className="inline-block mr-2">✓</span>
+              )}
+              {buttonLabel}
+            </button>
+          </div>
         )}
       </div>
     </article>
