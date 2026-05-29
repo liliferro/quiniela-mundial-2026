@@ -42,7 +42,7 @@ export default function LoginPage() {
         <section className="lg:flex-1 lg:flex lg:items-center px-6 sm:px-10 lg:px-16 pt-10 pb-6 lg:py-0">
           <div className="max-w-xl mx-auto lg:mx-0 w-full">
             <div className="mb-8 lg:mb-12">
-              <img src="/phasa-logo.png" alt="PHASA" className="h-9 sm:h-10 w-auto mb-3" />
+              <img src="/phasa-logo.svg" alt="PHASA" className="h-9 sm:h-10 w-auto mb-3" />
               <div>
                 <h1 className="font-display text-base font-bold text-white leading-tight">
                   Quiniela Mundial 2026
