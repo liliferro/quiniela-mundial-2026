@@ -41,10 +41,8 @@ export default function LoginPage() {
         {/* Left side — Brand + value prop */}
         <section className="lg:flex-1 lg:flex lg:items-center px-6 sm:px-10 lg:px-16 pt-10 pb-6 lg:py-0">
           <div className="max-w-xl mx-auto lg:mx-0 w-full">
-            <div className="flex items-center gap-3 mb-8 lg:mb-12">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#00a859] to-[#007a3d] flex items-center justify-center font-display font-extrabold text-white text-xl shadow-lg shadow-emerald-500/30">
-                Q
-              </div>
+            <div className="mb-8 lg:mb-12">
+              <img src="/phasa-logo.png" alt="PHASA" className="h-9 sm:h-10 w-auto mb-3" />
               <div>
                 <h1 className="font-display text-base font-bold text-white leading-tight">
                   Quiniela Mundial 2026

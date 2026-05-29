@@ -54,15 +54,10 @@ export default function AppHeader({ active }: { active: Active }) {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-3">
         {/* Brand */}
         <Link href="/dashboard" className="flex items-center gap-3 shrink-0">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#00a859] to-[#007a3d] flex items-center justify-center font-display font-extrabold text-white shadow-lg shadow-emerald-500/20">
-            Q
-          </div>
+          <img src="/phasa-logo.png" alt="PHASA" className="h-7 sm:h-8 w-auto" />
           <div className="hidden sm:block">
-            <h1 className="font-display text-base font-bold text-white leading-tight">
-              Quiniela Mundial 2026
-            </h1>
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-emerald-300/80">
-              Fase de grupos
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-white/50">
+              Quiniela · Mundial 2026
             </span>
           </div>
         </Link>
