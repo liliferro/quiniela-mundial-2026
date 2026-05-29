@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import AppHeader from "@/components/AppHeader";
-import { flagEmoji } from "@/lib/flag";
+import { flagSrc } from "@/lib/flag";
 
 type Match = {
   id: string;
@@ -291,13 +291,12 @@ export default function DashboardPage() {
 
               <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 sm:gap-6 py-2">
                 <div className="flex flex-col items-center gap-2 min-w-0">
-                  <div
-                    className="text-[44px] sm:text-[52px] leading-none drop-shadow-sm select-none"
-                    aria-label={`Bandera de ${nextMatch.home_team}`}
-                    role="img"
-                  >
-                    {flagEmoji(nextMatch.home_flag)}
-                  </div>
+                  <img
+                    src={flagSrc(nextMatch.home_flag)}
+                    alt={`Bandera de ${nextMatch.home_team}`}
+                    className="w-16 sm:w-20 rounded shadow-sm"
+                    style={{ aspectRatio: "4/3", objectFit: "cover" }}
+                  />
                   <div className="text-center min-w-0 w-full">
                     <div className="font-display text-2xl font-extrabold text-[#07111f] leading-none tracking-tight">
                       {nextMatch.home_flag}
@@ -315,13 +314,12 @@ export default function DashboardPage() {
                 </div>
 
                 <div className="flex flex-col items-center gap-2 min-w-0">
-                  <div
-                    className="text-[44px] sm:text-[52px] leading-none drop-shadow-sm select-none"
-                    aria-label={`Bandera de ${nextMatch.away_team}`}
-                    role="img"
-                  >
-                    {flagEmoji(nextMatch.away_flag)}
-                  </div>
+                  <img
+                    src={flagSrc(nextMatch.away_flag)}
+                    alt={`Bandera de ${nextMatch.away_team}`}
+                    className="w-16 sm:w-20 rounded shadow-sm"
+                    style={{ aspectRatio: "4/3", objectFit: "cover" }}
+                  />
                   <div className="text-center min-w-0 w-full">
                     <div className="font-display text-2xl font-extrabold text-[#07111f] leading-none tracking-tight">
                       {nextMatch.away_flag}
