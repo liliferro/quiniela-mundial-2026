@@ -10,9 +10,10 @@ export default async function LoginPage() {
   const hostBrand = getBrandFromHost(host);
   const logoUrl = LOGO_URL || hostBrand?.logoPath || null;
   const brandName = LOGO_URL ? BRAND_NAME : (hostBrand?.name ?? BRAND_NAME);
+  const logoFilter = hostBrand?.logoFilter;
 
   return (
-    <BrandProvider logoUrl={logoUrl} brandName={brandName}>
+    <BrandProvider logoUrl={logoUrl} brandName={brandName} logoFilter={logoFilter}>
       <div className="min-h-screen stadium-bg relative overflow-hidden">
         <div className="absolute -top-32 -left-32 w-[480px] h-[480px] rounded-full bg-emerald-500/15 blur-3xl pointer-events-none" />
         <div className="absolute -bottom-40 -right-32 w-[520px] h-[520px] rounded-full bg-[#0057ff]/15 blur-3xl pointer-events-none" />

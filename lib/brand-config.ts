@@ -1,5 +1,5 @@
-export const BRAND_BY_HOSTNAME: Record<string, { name: string; logoPath: string }> = {
-  lacomuna: { name: "La Comuna", logoPath: "/logo-lacomuna.png" },
+export const BRAND_BY_HOSTNAME: Record<string, { name: string; logoPath: string; logoFilter?: string }> = {
+  lacomuna: { name: "La Comuna", logoPath: "/logo-lacomuna.png", logoFilter: "invert(1)" },
 };
 
 export function getBrandFromHost(host: string) {

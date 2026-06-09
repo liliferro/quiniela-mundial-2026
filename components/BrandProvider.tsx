@@ -2,7 +2,7 @@
 
 import { createContext, useContext } from "react";
 
-type BrandContextValue = { logoUrl: string | null; brandName: string };
+type BrandContextValue = { logoUrl: string | null; brandName: string; logoFilter?: string };
 
 const BrandContext = createContext<BrandContextValue>({
   logoUrl: null,
@@ -13,13 +13,15 @@ export function BrandProvider({
   children,
   logoUrl,
   brandName,
+  logoFilter,
 }: {
   children: React.ReactNode;
   logoUrl: string | null;
   brandName: string;
+  logoFilter?: string;
 }) {
   return (
-    <BrandContext.Provider value={{ logoUrl, brandName }}>
+    <BrandContext.Provider value={{ logoUrl, brandName, logoFilter }}>
       {children}
     </BrandContext.Provider>
   );

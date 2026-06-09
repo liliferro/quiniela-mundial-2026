@@ -12,9 +12,10 @@ export default async function AppLayout({
   const hostBrand = getBrandFromHost(host);
   const logoUrl = LOGO_URL || hostBrand?.logoPath || null;
   const brandName = LOGO_URL ? BRAND_NAME : (hostBrand?.name ?? BRAND_NAME);
+  const logoFilter = hostBrand?.logoFilter;
 
   return (
-    <BrandProvider logoUrl={logoUrl} brandName={brandName}>
+    <BrandProvider logoUrl={logoUrl} brandName={brandName} logoFilter={logoFilter}>
       {children}
     </BrandProvider>
   );

@@ -4,7 +4,7 @@ import PhasaLogo from "@/components/PhasaLogo";
 import { useBrand } from "@/components/BrandProvider";
 
 export default function BrandLogo({ className }: { className?: string }) {
-  const { logoUrl, brandName } = useBrand();
+  const { logoUrl, brandName, logoFilter } = useBrand();
 
   if (logoUrl) {
     return (
@@ -12,7 +12,7 @@ export default function BrandLogo({ className }: { className?: string }) {
         src={logoUrl}
         alt={brandName}
         className={className}
-        style={{ objectFit: "contain" }}
+        style={{ objectFit: "contain", filter: logoFilter }}
       />
     );
   }
