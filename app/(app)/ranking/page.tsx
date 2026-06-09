@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import AppHeader from "@/components/AppHeader";
+import { TENANT_ID } from "@/lib/tenant";
 
 type RankingEntry = {
   user_id: string;
@@ -32,9 +33,13 @@ function initialOf(name: string | null) {
 export default async function RankingPage() {
   const supabase = await createClient();
 
+  const rankingQuery = TENANT_ID
+    ? supabase.from("league_rankings").select("*").eq("league_id", TENANT_ID).order("position")
+    : supabase.from("league_rankings").select("*").order("position");
+
   const [{ data: { user } }, { data }] = await Promise.all([
     supabase.auth.getUser(),
-    supabase.from("league_rankings").select("*").order("position"),
+    rankingQuery,
   ]);
 
   const realRanking = (data as RankingEntry[]) ?? [];

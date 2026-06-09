@@ -15,9 +15,10 @@ export async function GET(request: Request) {
       } = await supabase.auth.getUser();
 
       if (user) {
+        const leagueId = process.env.NEXT_PUBLIC_TENANT_ID || null;
         await supabase
           .from("profiles")
-          .upsert({ id: user.id }, { onConflict: "id" });
+          .upsert({ id: user.id, league_id: leagueId }, { onConflict: "id" });
       }
 
       return NextResponse.redirect(`${origin}/dashboard`);

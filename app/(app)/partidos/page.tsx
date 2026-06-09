@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import MatchCard from "@/components/MatchCard";
 import AppHeader from "@/components/AppHeader";
+import { TENANT_ID } from "@/lib/tenant";
 
 type Match = {
   id: string;
@@ -88,16 +89,18 @@ export default function PartidosPage() {
     setMatches((matchesData as Match[]) ?? []);
 
     if (user) {
+      const predsQuery = supabase
+        .from("predictions")
+        .select("match_id, pred_home, pred_away, pts_earned, is_locked")
+        .eq("user_id", user.id);
+      const rankQuery = supabase
+        .from("league_rankings")
+        .select("total_pts, position, exact_count")
+        .eq("user_id", user.id);
+
       const [{ data: predsData }, { data: rankRow }] = await Promise.all([
-        supabase
-          .from("predictions")
-          .select("match_id, pred_home, pred_away, pts_earned, is_locked")
-          .eq("user_id", user.id),
-        supabase
-          .from("league_rankings")
-          .select("total_pts, position, exact_count")
-          .eq("user_id", user.id)
-          .maybeSingle(),
+        TENANT_ID ? predsQuery.eq("league_id", TENANT_ID) : predsQuery.is("league_id", null),
+        (TENANT_ID ? rankQuery.eq("league_id", TENANT_ID) : rankQuery).maybeSingle(),
       ]);
 
       const predsMap: Record<string, Prediction> = {};
@@ -130,6 +133,7 @@ export default function PartidosPage() {
           match_id: matchId,
           pred_home: home,
           pred_away: away,
+          league_id: TENANT_ID,
         }),
       });
       const data = await res.json();

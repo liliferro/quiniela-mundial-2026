@@ -5,6 +5,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import AppHeader from "@/components/AppHeader";
 import { flagSrc } from "@/lib/flag";
+import { TENANT_ID } from "@/lib/tenant";
 
 type Match = {
   id: string;
@@ -77,6 +78,15 @@ export default function DashboardPage() {
         (user.user_metadata?.full_name as string) ?? user.email ?? "Jugador"
       );
 
+      const predsQuery = supabase
+        .from("predictions")
+        .select("match_id")
+        .eq("user_id", user.id);
+      const rankQuery = supabase
+        .from("league_rankings")
+        .select("total_pts, position")
+        .eq("user_id", user.id);
+
       const [
         { data: matches },
         { data: preds },
@@ -86,15 +96,8 @@ export default function DashboardPage() {
           .from("matches")
           .select("*")
           .order("match_date", { ascending: true }),
-        supabase
-          .from("predictions")
-          .select("match_id")
-          .eq("user_id", user.id),
-        supabase
-          .from("league_rankings")
-          .select("total_pts, position")
-          .eq("user_id", user.id)
-          .maybeSingle(),
+        TENANT_ID ? predsQuery.eq("league_id", TENANT_ID) : predsQuery.is("league_id", null),
+        (TENANT_ID ? rankQuery.eq("league_id", TENANT_ID) : rankQuery).maybeSingle(),
       ]);
 
       const all = (matches as Match[]) ?? [];

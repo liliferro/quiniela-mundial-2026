@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git tag -a v1.2.0 -m ' *)",
+      "Bash(git tag -a quiniela-lista -m ' *)"
+    ]
+  }
+}

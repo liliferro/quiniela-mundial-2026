@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import PhasaLogo from "@/components/PhasaLogo";
+import BrandLogo from "@/components/BrandLogo";
+import { TENANT_ID } from "@/lib/tenant";
 
 type Active = "dashboard" | "partidos" | "ranking";
 
@@ -32,11 +33,14 @@ export default function AppHeader({ active }: { active: Active }) {
         "Jugador";
       setName(display);
 
-      const { data } = await supabase
+      const rankQuery = supabase
         .from("league_rankings")
         .select("total_pts, position")
-        .eq("user_id", user.id)
-        .maybeSingle();
+        .eq("user_id", user.id);
+      const { data } = await (TENANT_ID
+        ? rankQuery.eq("league_id", TENANT_ID)
+        : rankQuery
+      ).maybeSingle();
 
       if (data) {
         setPoints(data.total_pts);
@@ -55,7 +59,7 @@ export default function AppHeader({ active }: { active: Active }) {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-3">
         {/* Brand */}
         <Link href="/dashboard" className="flex items-center gap-3 shrink-0">
-          <PhasaLogo className="h-7 sm:h-8 w-auto" />
+          <BrandLogo className="h-7 sm:h-8 w-auto" />
           <div className="hidden sm:block">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-white/50">
               Quiniela · Mundial 2026
