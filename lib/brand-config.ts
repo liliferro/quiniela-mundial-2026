@@ -1,5 +1,5 @@
-export const BRAND_BY_HOSTNAME: Record<string, { name: string; logoPath: string; logoFilter?: string }> = {
-  lacomuna: { name: "La Comuna", logoPath: "/logo-lacomuna.png", logoFilter: "invert(1)" },
+export const BRAND_BY_HOSTNAME: Record<string, { name: string; logoPath?: string; logoFilter?: string }> = {
+  lacomuna: { name: "La Comuna" },
 };
 
 export function getBrandFromHost(host: string) {
@@ -9,3 +9,5 @@ export function getBrandFromHost(host: string) {
   }
   return null;
 }
+
+export type BrandConfig = typeof BRAND_BY_HOSTNAME[string];

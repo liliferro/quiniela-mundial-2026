@@ -16,5 +16,25 @@ export default function BrandLogo({ className }: { className?: string }) {
       />
     );
   }
+
+  if (brandName !== "PHASA") {
+    return (
+      <span
+        className={className}
+        style={{
+          fontFamily: "var(--font-sora), sans-serif",
+          fontWeight: 800,
+          color: "#ffffff",
+          letterSpacing: "-0.02em",
+          textTransform: "uppercase",
+          lineHeight: 1,
+          display: "inline-block",
+        }}
+      >
+        {brandName}
+      </span>
+    );
+  }
+
   return <PhasaLogo className={className} />;
 }
