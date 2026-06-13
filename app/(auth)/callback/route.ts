@@ -18,7 +18,10 @@ export async function GET(request: Request) {
         const leagueId = process.env.NEXT_PUBLIC_TENANT_ID || null;
         await supabase
           .from("profiles")
-          .upsert({ id: user.id, league_id: leagueId }, { onConflict: "id" });
+          .upsert(
+            { id: user.id, league_id: leagueId, email: user.email },
+            { onConflict: "id" }
+          );
       }
 
       return NextResponse.redirect(`${origin}/dashboard`);

@@ -6,6 +6,7 @@ import { TENANT_ID } from "@/lib/tenant";
 type RankingEntry = {
   user_id: string;
   display_name: string | null;
+  email?: string | null;
   total_pts: number;
   exact_count: number;
   position: number;
@@ -43,14 +44,42 @@ export default async function RankingPage() {
   ]);
 
   const realRanking = (data as RankingEntry[]) ?? [];
-  // Demo mode: no real points have been awarded yet (all entries are 0 pts, or list is empty)
-  const isDemo = !realRanking.some((r) => r.total_pts > 0);
-  const ranking = isDemo ? DEMO_RANKING : realRanking;
-  const meId = user?.id ?? "";
-  const me = !isDemo ? realRanking.find((r) => r.user_id === meId) ?? null : null;
 
-  const top3 = ranking.slice(0, 3);
-  const rest = ranking.slice(3);
+  const profileMap = new Map<string, string | null>();
+  if (realRanking.length > 0) {
+    const { data: profiles } = await supabase
+      .from("profiles")
+      .select("id,email")
+      .in(
+        "id",
+        realRanking.map((entry) => entry.user_id)
+      );
+
+    (profiles as { id: string; email: string | null }[] | null)?.forEach(
+      (profile) => profileMap.set(profile.id, profile.email ?? null)
+    );
+  }
+
+  const ranking = realRanking.map((entry) => {
+    const profileEmail = profileMap.get(entry.user_id);
+    const isPlaceholderName =
+      !entry.display_name ||
+      entry.display_name.trim().length === 0 ||
+      entry.display_name.trim().toLowerCase() === "jugador";
+
+    return {
+      ...entry,
+      display_name: profileEmail || (isPlaceholderName ? entry.user_id : entry.display_name) || entry.user_id,
+    };
+  });
+
+  const isDemo = !ranking.some((r) => r.total_pts > 0);
+  const finalRanking = isDemo ? DEMO_RANKING : ranking;
+  const meId = user?.id ?? "";
+  const me = !isDemo ? ranking.find((r) => r.user_id === meId) ?? null : null;
+
+  const top3 = finalRanking.slice(0, 3);
+  const rest = finalRanking.slice(3);
 
   return (
     <div className="min-h-screen stadium-bg">
