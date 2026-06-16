@@ -2,22 +2,29 @@ import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export async function GET() {
-      const supabase = createAdminClient();
-      const tenantId = process.env.NEXT_PUBLIC_TENANT_ID || null;
+        const supabase = createAdminClient();
 
-  const filtered = tenantId
-        ? await supabase.from("league_rankings").select("*").eq("league_id", tenantId).order("position").limit(10)
-          : await supabase.from("league_rankings").select("*").order("position").limit(10);
+  const ranking = await supabase
+          .from("league_rankings")
+          .select("user_id, display_name:full_name, total_pts, exact_count:exact_hits, position")
+          .order("position")
+          .limit(5);
 
-  const unfiltered = await supabase.from("league_rankings").select("*").order("position").limit(10);
+  const profilesSample = await supabase.from("profiles").select("*").limit(3);
+
+  const usersResp = await supabase.auth.admin.listUsers({ page: 1, perPage: 5 });
 
   return NextResponse.json({
-          tenantId,
-          filteredCount: filtered.data?.length ?? 0,
-          filteredError: filtered.error?.message ?? null,
-          filteredSample: filtered.data?.slice(0, 3) ?? [],
-          unfilteredCount: unfiltered.data?.length ?? 0,
-          unfilteredError: unfiltered.error?.message ?? null,
-          unfilteredSample: unfiltered.data?.slice(0, 3) ?? [],
+            aliasedRankingError: ranking.error?.message ?? null,
+            aliasedRankingSample: ranking.data ?? [],
+            profilesColumns: profilesSample.data?.[0] ? Object.keys(profilesSample.data[0]) : [],
+            profilesSample: profilesSample.data ?? [],
+            profilesError: profilesSample.error?.message ?? null,
+            authUsersSample: (usersResp.data?.users ?? []).map((u) => ({
+                        id: u.id,
+                        email: u.email,
+                        user_metadata: u.user_metadata,
+            })),
+            authUsersError: usersResp.error?.message ?? null,
   });
 }
