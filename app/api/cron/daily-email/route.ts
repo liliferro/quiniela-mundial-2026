@@ -35,10 +35,13 @@ const resend = new Resend(resendKey);
         const now = new Date();
 
 try {
-        const { data: matchesData } = await supabase
+        const { data: matchesData, error: matchesError } = await supabase
         .from("matches")
         .select("home_team, away_team, home_flag, away_flag, match_date, venue, city, group_name, status")
         .order("match_date", { ascending: true });
+        if (matchesError) {
+                console.error("Error obteniendo matches:", matchesError.message);
+        }
 
         const allMatches = (matchesData ?? []) as (MatchInfo & { status: string })[];
         const todayMatches = allMatches.filter(
@@ -54,11 +57,14 @@ try {
         if (rankingError) {
                 console.error("Error obteniendo ranking:", rankingError.message);
         }
-        const ranking = (rankingData ?? []) as RankingEntry[];
+        let ranking = (rankingData ?? []) as RankingEntry[];
 
-        const { data: profilesData } = await supabase
+        const { data: profilesData, error: profilesError } = await supabase
         .from("profiles")
-        .select("id, email, display_name");
+        .select("id, email, display_name:full_name");
+        if (profilesError) {
+                console.error("Error obteniendo profiles:", profilesError.message);
+        }
 
         const profiles = (profilesData ?? []) as { id: string; email: string | null; display_name: string | null }[];
         const profileMap: Record<string, { email: string | null; display_name: string | null }> = {};
@@ -74,8 +80,25 @@ try {
                 if (error || !data?.users?.length) break;
                 authUsers.push(...data.users.map((u) => ({ id: u.id, email: u.email ?? null })));
                 if (data.users.length < 1000) break;
-                page++;
+                              page++;
         }
+
+        const emailById: Record<string, string | null> = {};
+        authUsers.forEach((u) => {
+                emailById[u.id] = u.email;
+        });
+
+        // Todavia no existen nombres reales en el sistema (full_name es null para
+        // todos), asi que el ranking del correo respalda con el nombre de usuario
+        // del email en vez de mostrar "Jugador" para todos.
+        ranking = ranking.map((r) => ({
+                ...r,
+                display_name:
+                r.display_name ||
+                        profileMap[r.user_id]?.display_name ||
+                        emailById[r.user_id]?.split("@")[0] ||
+                        null,
+        }));
 
         const recipients = authUsers
         .map((u) => ({
