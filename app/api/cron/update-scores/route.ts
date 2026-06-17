@@ -82,15 +82,15 @@ return NextResponse.json({ error: "FOOTBALL_API_KEY not set" }, { status: 500 })
 }
 
 try {
-const today = new Date();
-const yesterday = new Date(today);
-yesterday.setDate(today.getDate() - 1);
-const todayStr = today.toISOString().slice(0, 10);
-const yesterdayStr = yesterday.toISOString().slice(0, 10);
-
+const now = new Date();
+  const todayStr = now.toLocaleDateString("en-CA", { timeZone: "America/Mexico_City" });
+  const yesterdayAnchor = new Date(`${todayStr}T12:00:00Z`);
+  yesterdayAnchor.setUTCDate(yesterdayAnchor.getUTCDate() - 1);
+  const yesterdayStr = yesterdayAnchor.toISOString().slice(0, 10);
+  
 const fetchFixtures = async (date: string) => {
 const res = await fetch(
-`${API_URL}/fixtures?league=${WORLD_CUP_LEAGUE}&season=${WORLD_CUP_SEASON}&date=${date}`,
+`${API_URL}/fixtures?league=${WORLD_CUP_LEAGUE}&season=${WORLD_CUP_SEASON}&date=${date}&timezone=America/Mexico_City`,
 { headers: { "x-apisports-key": apiKey, "x-rapidapi-key": apiKey } }
 );
 if (!res.ok) throw new Error(`API-Football error ${res.status}`);
@@ -112,8 +112,8 @@ const supabase = createAdminClient();
 const { data: dbMatches, error: dbError } = await supabase
 .from("matches")
 .select("id, home_flag, away_flag, match_date, status, home_score, away_score")
-.gte("match_date", `${yesterdayStr}T00:00:00`)
-.lte("match_date", `${todayStr}T23:59:59`);
+.gte("match_date", `${yesterdayStr}T00:00:00-06:00`)
+.lte("match_date", `${todayStr}T23:59:59-06:00`);
 
 if (dbError) throw new Error(dbError.message);
 const matches = (dbMatches ?? []) as DbMatch[];
