@@ -34,6 +34,7 @@ function formatDay(iso: string) {
     weekday: "short",
     day: "numeric",
     month: "short",
+          timeZone: "America/Mexico_City",
   });
   return raw.charAt(0).toUpperCase() + raw.slice(1);
 }
@@ -43,6 +44,7 @@ function formatTime(iso: string) {
     hour: "2-digit",
     minute: "2-digit",
     hour12: true,
+          timeZone: "America/Mexico_City",
   });
 }
 
