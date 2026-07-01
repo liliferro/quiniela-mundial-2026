@@ -213,7 +213,7 @@ export async function GET() {
       await Promise.all(
         batch.map(async (user) => {
           try {
-            const userName = user.display_name || user.email?.split("@")[0] || "Jugador";
+            const userName = user.email?.split("@")[0] || "Jugador";
             const html = buildFinalEmailHtml({ userName, userId: user.id, appUrl, brandName, ranking });
             const subject = `🏆 ${brandName} · ¡Resultados finales del Mundial!`;
             await resend.emails.send({ from: fromEmail, to: user.email!, subject, html });
