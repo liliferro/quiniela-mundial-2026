@@ -165,25 +165,7 @@ export async function GET() {
   const supabase = createAdminClient();
 
   try {
-    const tenantId = process.env.NEXT_PUBLIC_TENANT_ID || null;
-    const rankQuery = tenantId
-      ? supabase.from("league_rankings").select("user_id, display_name, total_pts, exact_count, position").eq("league_id", tenantId).order("position")
-      : supabase.from("league_rankings").select("user_id, display_name, total_pts, exact_count, position").is("league_id", null).order("position");
-
-    const { data: rankingData, error: rankError } = await rankQuery;
-    if (rankError) {
-      console.error("Error fetching ranking:", rankError);
-      return NextResponse.json({ error: rankError.message }, { status: 500 });
-    }
-
-    const ranking = (rankingData ?? []) as Array<{
-      position: number;
-      display_name: string | null;
-      total_pts: number;
-      exact_count: number;
-      user_id: string;
-    }>;
-
+    // 1. Profiles (emails + names)
     const { data: profilesData, error: profilesError } = await supabase.from("profiles").select("id, email, display_name");
     if (profilesError) {
       console.error("Error fetching profiles:", profilesError);
@@ -191,7 +173,33 @@ export async function GET() {
     }
 
     const profiles = (profilesData ?? []) as Array<{ id: string; email: string | null; display_name: string | null }>;
+    const profileMap: Record<string, { email: string | null; display_name: string | null }> = {};
+    profiles.forEach((p) => { profileMap[p.id] = { email: p.email, display_name: p.display_name }; });
+
     const recipients = profiles.filter((p) => p.email && p.email.includes("@"));
+
+    // 2. Ranking (no display_name column in view — join via profileMap)
+    const tenantId = process.env.NEXT_PUBLIC_TENANT_ID || null;
+    const rankQuery = tenantId
+      ? supabase.from("league_rankings").select("user_id, total_pts, exact_count, position").eq("league_id", tenantId).order("position")
+      : supabase.from("league_rankings").select("user_id, total_pts, exact_count, position").is("league_id", null).order("position");
+
+    const { data: rankingData, error: rankError } = await rankQuery;
+    if (rankError) {
+      console.error("Error fetching ranking:", rankError);
+      return NextResponse.json({ error: rankError.message }, { status: 500 });
+    }
+
+    const ranking = ((rankingData ?? []) as Array<{
+      position: number;
+      total_pts: number;
+      exact_count: number;
+      user_id: string;
+    }>).map((r) => {
+      const prof = profileMap[r.user_id];
+      const display_name = prof?.display_name || prof?.email?.split("@")[0] || "Jugador";
+      return { ...r, display_name };
+    });
 
     if (recipients.length === 0) {
       return NextResponse.json({ message: "No hay usuarios con email", sent: 0 });
