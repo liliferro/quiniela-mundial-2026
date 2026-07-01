@@ -166,15 +166,15 @@ export async function GET() {
 
   try {
     // 1. Profiles (emails + names)
-    const { data: profilesData, error: profilesError } = await supabase.from("profiles").select("id, email, display_name");
+    const { data: profilesData, error: profilesError } = await supabase.from("profiles").select("id, email");
     if (profilesError) {
       console.error("Error fetching profiles:", profilesError);
       return NextResponse.json({ error: profilesError.message }, { status: 500 });
     }
 
-    const profiles = (profilesData ?? []) as Array<{ id: string; email: string | null; display_name: string | null }>;
-    const profileMap: Record<string, { email: string | null; display_name: string | null }> = {};
-    profiles.forEach((p) => { profileMap[p.id] = { email: p.email, display_name: p.display_name }; });
+    const profiles = (profilesData ?? []) as Array<{ id: string; email: string | null }>;
+    const profileMap: Record<string, string> = {};
+    profiles.forEach((p) => { profileMap[p.id] = p.email?.split("@")[0] || "Jugador"; });
 
     const recipients = profiles.filter((p) => p.email && p.email.includes("@"));
 
@@ -196,8 +196,7 @@ export async function GET() {
       exact_count: number;
       user_id: string;
     }>).map((r) => {
-      const prof = profileMap[r.user_id];
-      const display_name = prof?.display_name || prof?.email?.split("@")[0] || "Jugador";
+      const display_name = profileMap[r.user_id] || "Jugador";
       return { ...r, display_name };
     });
 
