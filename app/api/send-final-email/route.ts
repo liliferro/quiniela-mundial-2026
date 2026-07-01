@@ -181,8 +181,8 @@ export async function GET() {
     // 2. Ranking (no display_name column in view — join via profileMap)
     const tenantId = process.env.NEXT_PUBLIC_TENANT_ID || null;
     const rankQuery = tenantId
-      ? supabase.from("league_rankings").select("user_id, total_pts, exact_count, position").eq("league_id", tenantId).order("position")
-      : supabase.from("league_rankings").select("user_id, total_pts, exact_count, position").is("league_id", null).order("position");
+      ? supabase.from("league_rankings").select("user_id, total_pts, position").eq("league_id", tenantId).order("position")
+      : supabase.from("league_rankings").select("user_id, total_pts, position").is("league_id", null).order("position");
 
     const { data: rankingData, error: rankError } = await rankQuery;
     if (rankError) {
@@ -193,11 +193,10 @@ export async function GET() {
     const ranking = ((rankingData ?? []) as Array<{
       position: number;
       total_pts: number;
-      exact_count: number;
       user_id: string;
     }>).map((r) => {
       const display_name = profileMap[r.user_id] || "Jugador";
-      return { ...r, display_name };
+      return { ...r, display_name, exact_count: 0 };
     });
 
     if (recipients.length === 0) {
