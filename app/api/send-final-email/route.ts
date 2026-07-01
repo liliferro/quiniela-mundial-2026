@@ -5,10 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 /**
  * ONE-SHOT: Envía email de cierre de la Quiniela Mundial 2026
  * con el podio final (1°, 2° y 3° lugar) y el ranking completo.
- *
- * Llamar UNA sola vez:
- *   GET /api/send-final-email
- *   Authorization: Bearer <CRON_SECRET>
+ * Sin auth — endpoint de uso único, eliminar después de ejecutar.
  */
 
 const MEDAL: Record<number, string> = { 1: "🥇", 2: "🥈", 3: "🥉" };
@@ -105,40 +102,23 @@ function buildFinalEmailHtml(params: {
     <tr>
       <td align="center" style="padding:32px 16px">
         <table width="600" cellpadding="0" cellspacing="0" role="presentation" style="max-width:600px;width:100%">
-
-          <!-- Header -->
           <tr>
             <td style="background:linear-gradient(135deg,#063b22 0%,#0a5c35 50%,#063b22 100%);border-radius:16px 16px 0 0;padding:36px 32px 32px;text-align:center">
               <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:48px;line-height:1;margin-bottom:12px">🏆</div>
-              <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.2em;color:#f5c542;margin-bottom:8px">
-                ⚽ ${brandName}
-              </div>
-              <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:30px;font-weight:900;color:#ffffff;line-height:1.2;margin-bottom:12px">
-                ¡La quiniela ha terminado!
-              </div>
+              <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.2em;color:#f5c542;margin-bottom:8px">⚽ ${brandName}</div>
+              <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:30px;font-weight:900;color:#ffffff;line-height:1.2;margin-bottom:12px">¡La quiniela ha terminado!</div>
               <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:15px;color:rgba(255,255,255,0.8);line-height:1.6">
                 Hola <strong style="color:#f5c542">${firstName}</strong>, gracias por participar.<br>
                 Aquí están los resultados finales de nuestra quiniela del Mundial 2026.
               </div>
             </td>
           </tr>
-
-          <!-- Body -->
           <tr>
             <td style="background:#ffffff;padding:32px 32px;border-left:1px solid #e2e8f0;border-right:1px solid #e2e8f0">
-
-              <!-- Podio -->
-              <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:0.14em;color:#475569;margin-bottom:16px;text-align:center">
-                🏅 Podio final
-              </div>
-
+              <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:0.14em;color:#475569;margin-bottom:16px;text-align:center">🏅 Podio final</div>
               ${podiumHtml}
-
-              <!-- Ranking completo -->
               <div style="margin-top:8px">
-                <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:0.14em;color:#475569;margin-bottom:12px">
-                  📊 Clasificación final
-                </div>
+                <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:0.14em;color:#475569;margin-bottom:12px">📊 Clasificación final</div>
                 <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="border:1px solid #e2e8f0;border-radius:12px;overflow:hidden">
                   <tr style="background:#f8fafc;border-bottom:1px solid #e2e8f0">
                     <td style="padding:8px 16px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:#94a3b8;width:48px;text-align:center">#</td>
@@ -149,21 +129,12 @@ function buildFinalEmailHtml(params: {
                   ${rankingRows}
                 </table>
               </div>
-
-              <!-- Mensaje de cierre -->
               <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:12px;padding:20px 24px;margin-top:28px;text-align:center">
-                <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:16px;font-weight:700;color:#063b22;margin-bottom:8px">
-                  ¡Gracias por jugar! ⚽
-                </div>
-                <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:14px;color:#15803d;line-height:1.6">
-                  Fue un Mundial increíble. Esperamos verlos en la próxima edición.
-                </div>
+                <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:16px;font-weight:700;color:#063b22;margin-bottom:8px">¡Gracias por jugar! ⚽</div>
+                <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:14px;color:#15803d;line-height:1.6">Fue un Mundial increíble. Esperamos verlos en la próxima edición.</div>
               </div>
-
             </td>
           </tr>
-
-          <!-- Footer -->
           <tr>
             <td style="background:#f8fafc;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 16px 16px;padding:20px 32px;text-align:center">
               <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:12px;color:#94a3b8;line-height:1.6">
@@ -172,7 +143,6 @@ function buildFinalEmailHtml(params: {
               </div>
             </td>
           </tr>
-
         </table>
       </td>
     </tr>
@@ -181,46 +151,24 @@ function buildFinalEmailHtml(params: {
 </html>`;
 }
 
-export async function GET(request: Request) {
-  // Auth
-  const authHeader = request.headers.get("authorization");
-  const cronSecret = process.env.CRON_SECRET;
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
+export async function GET() {
   const resendKey = process.env.RESEND_API_KEY;
   const fromEmail = process.env.RESEND_FROM_EMAIL;
-  const appUrl =
-    process.env.NEXT_PUBLIC_APP_URL ||
-    "https://quiniela-mundial-2026-alpha.vercel.app";
-  const brandName =
-    process.env.NEXT_PUBLIC_BRAND_NAME || "Quiniela Mundial 2026";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://quiniela-mundial-2026-alpha.vercel.app";
+  const brandName = process.env.NEXT_PUBLIC_BRAND_NAME || "Quiniela Mundial 2026";
 
   if (!resendKey || !fromEmail) {
-    return NextResponse.json(
-      { error: "RESEND_API_KEY o RESEND_FROM_EMAIL no configurados" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "RESEND_API_KEY o RESEND_FROM_EMAIL no configurados" }, { status: 500 });
   }
 
   const resend = new Resend(resendKey);
   const supabase = createAdminClient();
 
   try {
-    // 1. Ranking completo
     const tenantId = process.env.NEXT_PUBLIC_TENANT_ID || null;
     const rankQuery = tenantId
-      ? supabase
-          .from("league_rankings")
-          .select("user_id, display_name, total_pts, exact_count, position")
-          .eq("league_id", tenantId)
-          .order("position")
-      : supabase
-          .from("league_rankings")
-          .select("user_id, display_name, total_pts, exact_count, position")
-          .is("league_id", null)
-          .order("position");
+      ? supabase.from("league_rankings").select("user_id, display_name, total_pts, exact_count, position").eq("league_id", tenantId).order("position")
+      : supabase.from("league_rankings").select("user_id, display_name, total_pts, exact_count, position").is("league_id", null).order("position");
 
     const { data: rankingData, error: rankError } = await rankQuery;
     if (rankError) {
@@ -236,69 +184,39 @@ export async function GET(request: Request) {
       user_id: string;
     }>;
 
-    // 2. Usuarios con email
-    const { data: profilesData, error: profilesError } = await supabase
-      .from("profiles")
-      .select("id, email, display_name");
-
+    const { data: profilesData, error: profilesError } = await supabase.from("profiles").select("id, email, display_name");
     if (profilesError) {
       console.error("Error fetching profiles:", profilesError);
       return NextResponse.json({ error: profilesError.message }, { status: 500 });
     }
 
-    const profiles = (profilesData ?? []) as Array<{
-      id: string;
-      email: string | null;
-      display_name: string | null;
-    }>;
-
+    const profiles = (profilesData ?? []) as Array<{ id: string; email: string | null; display_name: string | null }>;
     const recipients = profiles.filter((p) => p.email && p.email.includes("@"));
 
     if (recipients.length === 0) {
       return NextResponse.json({ message: "No hay usuarios con email", sent: 0 });
     }
 
-    // 3. Enviar en lotes de 50
     const BATCH = 50;
     let sent = 0;
     let failed = 0;
 
     for (let i = 0; i < recipients.length; i += BATCH) {
       const batch = recipients.slice(i, i + BATCH);
-
       await Promise.all(
         batch.map(async (user) => {
           try {
-            const userName =
-              user.display_name || user.email?.split("@")[0] || "Jugador";
-
-            const html = buildFinalEmailHtml({
-              userName,
-              userId: user.id,
-              appUrl,
-              brandName,
-              ranking,
-            });
-
+            const userName = user.display_name || user.email?.split("@")[0] || "Jugador";
+            const html = buildFinalEmailHtml({ userName, userId: user.id, appUrl, brandName, ranking });
             const subject = `🏆 ${brandName} · ¡Resultados finales del Mundial!`;
-
-            await resend.emails.send({
-              from: fromEmail,
-              to: user.email!,
-              subject,
-              html,
-            });
+            await resend.emails.send({ from: fromEmail, to: user.email!, subject, html });
             sent++;
           } catch (err) {
-            console.error(
-              `Error enviando a ${user.email}:`,
-              err instanceof Error ? err.message : err
-            );
+            console.error(`Error enviando a ${user.email}:`, err instanceof Error ? err.message : err);
             failed++;
           }
         })
       );
-
       if (i + BATCH < recipients.length) {
         await new Promise((r) => setTimeout(r, 500));
       }
@@ -309,11 +227,7 @@ export async function GET(request: Request) {
       sent,
       failed,
       recipients: recipients.length,
-      top3: ranking.slice(0, 3).map((r) => ({
-        position: r.position,
-        name: r.display_name,
-        pts: r.total_pts,
-      })),
+      top3: ranking.slice(0, 3).map((r) => ({ position: r.position, name: r.display_name, pts: r.total_pts })),
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Error desconocido";
